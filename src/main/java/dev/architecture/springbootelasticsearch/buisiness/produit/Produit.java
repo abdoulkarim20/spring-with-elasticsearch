@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 public class Produit {
     @Id
-    private Long id;
+    private String id;
     @Field(type = FieldType.Text)
     private String nom;
     @Field(type = FieldType.Text)
