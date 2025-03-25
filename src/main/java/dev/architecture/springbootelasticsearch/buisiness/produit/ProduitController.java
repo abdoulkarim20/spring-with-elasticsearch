@@ -17,28 +17,34 @@ public class ProduitController {
     public ProduitController(IProduit iProduit) {
         this.iProduit = iProduit;
     }
+
     @PostMapping("/save")
     public ResponseEntity<VoidResponse> save(@RequestBody Produit produit) {
         iProduit.saveProduit(produit);
         return ResponseEntity.status(HttpStatus.OK).body(new VoidResponse(HttpStatus.OK.value(), "Enregistrement réussi"));
     }
+
     @PostMapping("/save-all")
     public ResponseEntity<VoidResponse> save(@RequestBody List<Produit> produits) {
         iProduit.saveAllProduits(produits);
         return ResponseEntity.status(HttpStatus.OK).body(new VoidResponse(HttpStatus.OK.value(), "Enregistrement réussi"));
     }
+
     @GetMapping("/liste")
     public List<ProduitGetDTO> listeProduit() {
         return iProduit.getAll();
     }
+
     @GetMapping("/search")
     public List<ProduitGetDTO> searchProduitByDescriptionAndName(@RequestParam String keyword) {
         return iProduit.searchProduitByDescriptionAndName(keyword);
     }
+
     @GetMapping("/boost")
     public List<ProduitGetDTO> searchWithBoost(@RequestParam String keyword) {
         return iProduit.searchWithBoost(keyword);
     }
+
     @GetMapping("/page")
     public Page<ProduitGetDTO> searchPage(@RequestParam String keyword, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2") int size) {
         return iProduit.paginatedSearch(keyword, page, size);

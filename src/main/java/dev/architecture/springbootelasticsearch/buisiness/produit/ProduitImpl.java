@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.*;
 import org.springframework.data.elasticsearch.core.*;
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -49,15 +48,16 @@ public class ProduitImpl implements IProduit {
     @Override
     public List<ProduitGetDTO> searchProduitByDescriptionAndName(String keyword) {
         Query query = NativeQuery.builder()
-                .withQuery(q -> q.multiMatch(m -> m.fields("nom","description").query(keyword))).build();
+                .withQuery(q -> q.multiMatch(m -> m.fields("nom", "description").query(keyword))).build();
         return elasticsearchOperations.search(query, Produit.class)
                 .stream()
                 .map(SearchHit::getContent)
                 .map(produitGetMapper::toDto)
                 .collect(Collectors.toList());
     }
+
     @Override
-    public List<ProduitGetDTO>searchWithBoost(String keyword){
+    public List<ProduitGetDTO> searchWithBoost(String keyword) {
         Query query = NativeQuery.builder()
                 .withQuery(q -> q.multiMatch(m -> m
                         .fields("name^3.0", "description^1.0")  // Application de boosts sur les champs
@@ -74,11 +74,11 @@ public class ProduitImpl implements IProduit {
     @Override
     public Page<ProduitGetDTO> paginatedSearch(String keyword, int page, int size) {
         Query query = NativeQuery.builder()
-                .withQuery(q -> q.multiMatch(m -> m.fields("nom","description").query(keyword)))
+                .withQuery(q -> q.multiMatch(m -> m.fields("nom", "description").query(keyword)))
                 .withPageable(PageRequest.of(page, size))
                 .build();
-        SearchHits<Produit>searchHits = elasticsearchOperations.search(query, Produit.class);
-        SearchPage<Produit>searchPage= SearchHitSupport.searchPageFor(searchHits, query.getPageable());
+        SearchHits<Produit> searchHits = elasticsearchOperations.search(query, Produit.class);
+        SearchPage<Produit> searchPage = SearchHitSupport.searchPageFor(searchHits, query.getPageable());
         return searchPage.map(SearchHit::getContent).map(produitGetMapper::toDto);
     }
 
