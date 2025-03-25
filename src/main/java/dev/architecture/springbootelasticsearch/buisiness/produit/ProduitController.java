@@ -2,6 +2,7 @@ package dev.architecture.springbootelasticsearch.buisiness.produit;
 
 import dev.architecture.springbootelasticsearch.buisiness.produit.dtos.ProduitGetDTO;
 import dev.architecture.springbootelasticsearch.shared.VoidResponse;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,5 +30,17 @@ public class ProduitController {
     @GetMapping("/liste")
     public List<ProduitGetDTO> listeProduit() {
         return iProduit.getAll();
+    }
+    @GetMapping("/search")
+    public List<ProduitGetDTO> searchProduitByDescriptionAndName(@RequestParam String keyword) {
+        return iProduit.searchProduitByDescriptionAndName(keyword);
+    }
+    @GetMapping("/boost")
+    public List<ProduitGetDTO> searchWithBoost(@RequestParam String keyword) {
+        return iProduit.searchWithBoost(keyword);
+    }
+    @GetMapping("/page")
+    public Page<ProduitGetDTO> searchPage(@RequestParam String keyword, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2") int size) {
+        return iProduit.paginatedSearch(keyword, page, size);
     }
 }
